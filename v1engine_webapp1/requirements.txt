@@ -1,0 +1,6 @@
+streamlit
+pandas
+PyYAML
+matplotlib
+numpy
+tqdm

@@ -1,0 +1,624 @@
+backtest_settings:
+    start_date: '2018-01-01'
+    end_date: '2025-07-09'
+    initial_cash: 100000.0
+    benchmark_ticker: 'SPY'
+    top_n_positions: 5
+    stop_loss:
+        type: 'percentage'
+        value: 0.0  
+
+    # You can still use a percentage-based take profit as a ceiling,
+    # or disable it by setting the value to 0.
+    take_profit:
+        type: 'percentage'
+        value: 0.0
+
+
+strategies:
+    - name: 'FibonacciStrategy'
+      enabled: false
+      params:
+          lookback_period: 20
+          retracement_levels: [0.382, 0.5, 0.618]
+
+    - name: 'MomentumStrategy'
+      enabled: false
+      params:
+          momentum_window: 160
+    - name: 'Momentum2Strategy'
+      enabled: false
+      params:
+          momentum_window: 160
+    - name: 'Momentum3Strategy'
+      enabled: false
+      params:
+          momentum_window: 180          
+
+    - name: StochasticStrategy
+      enabled: false
+      params:
+            k_period: 30
+            d_period: 9
+            oversold_threshold: 40
+            overbought_threshold: 65
+    - name: Stochastic2Strategy
+      enabled: false
+      params:
+            k_period: 17
+            d_period: 10
+            oversold_threshold: 40
+            overbought_threshold: 65
+    - name: StochSpreadStrategy
+      enabled: false
+      params:
+          k_period: 15
+          d_period: 8
+          oversold_threshold: 20
+          overbought_threshold: 65          
+
+    - name: RsiStrategy
+      enabled: false
+      params:
+          rsi_period: 3
+          rsi_oversold_threshold: 20
+          rsi_overbought_threshold: 70
+    - name: Rsi2Strategy
+      enabled: false
+      params:
+          rsi_period: 7 
+          rsi_oversold_threshold: 30
+          rsi_overbought_threshold: 70
+
+    - name: BollingerStrategy
+      enabled: false
+      params:
+          bband_period: 60
+          bband_std_dev: 1.0
+    - name: BollingerStrategy
+      enabled: false
+      params:
+          bband_period: 60
+          bband_std_dev: 1.0
+
+    - name: 'SmaRsiStrategy'
+      enabled: false
+      params:
+          short_window: 50
+          long_window: 200
+          rsi_period: 14
+          rsi_threshold: 35
+    - name: 'SmaRsi2Strategy'
+      enabled: false
+      params:
+          short_window: 15
+          long_window: 40
+          rsi_period: 14
+          rsi_threshold: 50
+    - name: 'SmaRsi3Strategy'
+      enabled: false
+      params:
+          short_window: 20
+          long_window: 100
+          rsi_period: 21
+          rsi_threshold: 35
+    - name: 'KeltnerStrategy'
+      enabled: false
+      params:
+          ema_period: 20
+          atr_period: 20
+          atr_multiplier: 2.0
+    - name: 'Keltner2Strategy'
+      enabled: false
+      params:
+          ema_period: 10
+          atr_period: 10
+          atr_multiplier: 1.5
+    - name: 'Keltner3Strategy'
+      enabled: false
+      params:
+          ema_period: 50
+          atr_period: 50
+          atr_multiplier: 3.0
+    - name: 'BollingerRsiStrategy'
+      enabled: false
+      params:
+          bband_period: 20
+          bband_std_dev: 2.0
+          rsi_period: 14
+          rsi_oversold_threshold: 30 
+          rsi_overbought_threshold: 70 
+    - name: 'BollingerRsi2Strategy'
+      enabled: true
+      params:
+          bband_period: 60
+          bband_std_dev: 1.5
+          rsi_period: 7
+          rsi_oversold_threshold: 30 
+          rsi_overbought_threshold: 70
+    - name: 'BollingerRsi3Strategy'
+      enabled: false
+      params:
+          bband_period: 50
+          bband_std_dev: 2.1
+          rsi_period: 21
+          rsi_oversold_threshold: 30 
+          rsi_overbought_threshold: 70
+    - name: 'MacdStrategy'
+      enabled: false
+      params:
+          short_ema_period: 6 
+          long_ema_period: 13
+          signal_period: 3
+    - name: 'Macd2Strategy'
+      enabled: false
+      params:
+          short_ema_period: 12 
+          long_ema_period: 39
+          signal_period: 3
+    - name: 'Macd3Strategy'
+      enabled: false
+      params:
+          short_ema_period: 21
+          long_ema_period: 39
+          signal_period: 14
+
+
+tickers:
+- 'spy'
+- 'a'
+- 'aal'
+- 'aap'
+- 'aapl'
+- 'abnb'
+- 'abbv'
+- 'abt'
+- 'acgl'
+- 'acn'
+- 'adbe'
+- 'adi'
+- 'adm'
+- 'adp'
+- 'adsk'
+- 'aee'
+- 'aep'
+- 'aes'
+- 'afl'
+- 'aig'
+- 'aiz'
+- 'ajg'
+- 'akam'
+- 'alb'
+- 'algn'
+- 'alk'
+- 'all'
+- 'alle'
+- 'amcr'
+- 'amd'
+- 'ame'
+- 'amg'
+- 'amgn'
+- 'amp'
+- 'amt'
+- 'amzn'
+- 'anet'
+- 'anss'
+- 'aon'
+- 'aos'
+- 'apa'
+- 'apd'
+- 'aph'
+- 'apo'
+- 'app'
+- 'aptv'
+- 'are'
+- 'avb'
+- 'avgo'
+- 'avy'
+- 'awk'
+- 'axp'
+- 'azo'
+- 'ba'
+- 'bac'
+- 'bax'
+- 'bby'
+- 'bdx'
+- 'ben'
+- 'biib'
+- 'blk'
+- 'bkr'
+- 'br'
+- 'brk.b'
+- 'bro'
+- 'bsx'
+- 'bx'
+- 'c'
+- 'cag'
+- 'cah'
+- 'cat'
+- 'cb'
+- 'cbre'
+- 'cci'
+- 'ccl'
+- 'cdns'
+- 'cdw'
+- 'ce'
+- 'ceg'
+- 'cf'
+- 'cfg'
+- 'chd'
+- 'chtr'
+- 'ci'
+- 'cinf'
+- 'cl'
+- 'clx'
+- 'cma'
+- 'cmcsa'
+- 'cme'
+- 'cmg'
+- 'cmi'
+- 'cms'
+- 'cnc'
+- 'cnp'
+- 'cof'
+- 'coin'
+- 'coo'
+- 'cop'
+- 'cor'
+- 'cost'
+- 'cpb'
+- 'cprt'
+- 'cpt'
+- 'crwd'
+- 'csx'
+- 'ctlt'
+- 'ctra'
+- 'cts'
+- 'ctsh'
+- 'ctva'
+- 'cvs'
+- 'cvx'
+- 'd'
+- 'dal'
+- 'day'
+- 'dd'
+- 'de'
+- 'deck'
+- 'dfs'
+- 'dg'
+- 'dhi'
+- 'dhr'
+- 'dis'
+- 'dks'
+- 'dlr'
+- 'dltr'
+- 'do'
+- 'dov'
+- 'dow'
+- 'dpz'
+- 'dri'
+- 'dte'
+- 'duk'
+- 'dva'
+- 'dvn'
+- 'dxcm'
+- 'eix'
+- 'el'
+- 'elv'
+- 'emn'
+- 'emr'
+- 'enph'
+- 'eog'
+- 'epam'
+- 'eqix'
+- 'eqr'
+- 'eqt'
+- 'es'
+- 'ess'
+- 'etn'
+- 'etr'
+- 'etsy'
+- 'evrg'
+- 'ew'
+- 'exc'
+- 'expd'
+- 'expe'
+- 'exr'
+- 'f'
+- 'fang'
+- 'fast'
+- 'fcn'
+- 'fds'
+- 'fdx'
+- 'fe'
+- 'ffiv'
+- 'fi'
+- 'fis'
+- 'fitb'
+- 'fmc'
+- 'frt'
+- 'fslr'
+- 'ftnt'
+- 'ftv'
+- 'gd'
+- 'ge'
+- 'gehc'
+- 'gev'
+- 'gfs'
+- 'gild'
+- 'gis'
+- 'gl'
+- 'glw'
+- 'gm'
+- 'gnrc'
+- 'goog'
+- 'googl'
+- 'gpc'
+- 'gpm'
+- 'grmn'
+- 'gs'
+- 'gww'
+- 'hal'
+- 'has'
+- 'hban'
+- 'hca'
+- 'he'
+- 'hes'
+- 'hig'
+- 'hii'
+- 'hlt'
+- 'holx'
+- 'hon'
+- 'hpe'
+- 'hrl'
+- 'hst'
+- 'hsy'
+- 'hum'
+- 'hwm'
+- 'ibm'
+- 'ice'
+- 'idxx'
+- 'iex'
+- 'iff'
+- 'ilmn'
+- 'incy'
+- 'intc'
+- 'intu'
+- 'invh'
+- 'ip'
+- 'ipg'
+- 'iqv'
+- 'ir'
+- 'irm'
+- 'isrg'
+- 'it'
+- 'itw'
+- 'ivz'
+- 'j'
+- 'jbl'
+- 'jci'
+- 'jkhy'
+- 'jnj'
+- 'jnpr'
+- 'jpm'
+- 'k'
+- 'kdp'
+- 'ke'
+- 'key'
+- 'khc'
+- 'klac'
+- 'kmb'
+- 'kmi'
+- 'kmx'
+- 'ko'
+- 'kr'
+- 'kvue'
+- 'l'
+- 'ldos'
+- 'len'
+- 'lh'
+- 'lhx'
+- 'lin'
+- 'lly'
+- 'lmt'
+- 'lnt'
+- 'low'
+- 'lrcx'
+- 'lulu'
+- 'luv'
+- 'lvs'
+- 'lw'
+- 'lyb'
+- 'lyv'
+- 'ma'
+- 'maa'
+- 'mar'
+- 'mas'
+- 'mcd'
+- 'mck'
+- 'mco'
+- 'mdt'
+- 'met'
+- 'meta'
+- 'mhk'
+- 'mkc'
+- 'mktx'
+- 'mmm'
+- 'mnst'
+- 'mo'
+- 'mos'
+- 'mpc'
+- 'mpwr'
+- 'mrk'
+- 'mrna'
+- 'mro'
+- 'ms'
+- 'msci'
+- 'msft'
+- 'msi'
+- 'mtb'
+- 'mtd'
+- 'mu'
+- 'nclh'
+- 'ndaq'
+- 'nee'
+- 'nem'
+- 'nflx'
+- 'ni'
+- 'nke'
+- 'now'
+- 'nrg'
+- 'nsc'
+- 'ntap'
+- 'ntrs'
+- 'nue'
+- 'nvda'
+- 'nvr'
+- 'nwe'
+- 'nws'
+- 'nwsa'
+- 'o'
+- 'odfl'
+- 'oge'
+- 'omc'
+- 'on'
+- 'ora'
+- 'orcl'
+- 'orly'
+- 'otis'
+- 'oxy'
+- 'panw'
+- 'para'
+- 'payc'
+- 'payx'
+- 'pcar'
+- 'pdd'
+- 'peg'
+- 'pep'
+- 'pfe'
+- 'pfg'
+- 'pg'
+- 'pgr'
+- 'ph'
+- 'phm'
+- 'pkg'
+- 'pld'
+- 'pm'
+- 'pnc'
+- 'pnr'
+- 'pnw'
+- 'pool'
+- 'ppg'
+- 'pplt'
+- 'pru'
+- 'psa'
+- 'psx'
+- 'ptc'
+- 'pwr'
+- 'pxd'
+- 'pypl'
+- 'qcom'
+- 'qrvo'
+- 'rcl'
+- 'reg'
+- 'regn'
+- 'rf'
+- 'rhi'
+- 'rmd'
+- 'rok'
+- 'rol'
+- 'rop'
+- 'rost'
+- 'rsg'
+- 'rtx'
+- 'sbus'
+- 'schw'
+- 'shw'
+- 'siri'
+- 'slb'
+- 'smci'
+- 'sna'
+- 'snps'
+- 'so'
+- 'spg'
+- 'spgi'
+- 'sre'
+- 'ste'
+- 'stld'
+- 'stt'
+- 'stx'
+- 'stz'
+- 'swk'
+- 'swks'
+- 'syk'
+- 't'
+- 'tap'
+- 'tdg'
+- 'tdy'
+- 'tech'
+- 'tel'
+- 'ter'
+- 'tfc'
+- 'tfx'
+- 'tjx'
+- 'tmo'
+- 'tmus'
+- 'tpr'
+- 'trgp'
+- 'trmb'
+- 'trow'
+- 'trv'
+- 'tsla'
+- 'tsco'
+- 'tsm'
+- 'tt'
+- 'ttc'
+- 'twlo'
+- 'txn'
+- 'txt'
+- 'ua'
+- 'ual'
+- 'uber'
+- 'udr'
+- 'uhs'
+- 'ulta'
+- 'unh'
+- 'unp'
+- 'ups'
+- 'uri'
+- 'usb'
+- 'v'
+- 'vfc'
+- 'vlo'
+- 'vmc'
+- 'vrs'
+- 'vrsk'
+- 'vrtx'
+- 'vtr'
+- 'vtrs'
+- 'vz'
+- 'wab'
+- 'wat'
+- 'wbd'
+- 'wcn'
+- 'wdc'
+- 'wds'
+- 'wec'
+- 'well'
+- 'wfc'
+- 'whr'
+- 'wmb'
+- 'wmt'
+- 'wrb'
+- 'wrk'
+- 'wst'
+- 'wy'
+- 'wynn'
+- 'xel'
+- 'xom'
+- 'xrx'
+- 'xyl'
+- 'yum'
+- 'zbh'
+- 'zbra'
+- 'zts'

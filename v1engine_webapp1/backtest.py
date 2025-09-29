@@ -159,7 +159,8 @@ class Backtest:
         self.benchmark_ticker = settings['benchmark_ticker'].lower()
         self.tickers_to_trade = [t.lower() for t in self.config['tickers']]
         self.output_dir = None
-        self.data_handler = DataHandler(csv_dir='data', ticker_list=self.tickers_to_trade)
+        all_tickers_to_load = list(set(self.tickers_to_trade + [self.benchmark_ticker]))
+        self.data_handler = DataHandler(csv_dir='data', ticker_list=all_tickers_to_load)
         
         # --- MODIFICATION START: Read rebalancing frequency from config ---
         # Defaults to 1 (daily) if not specified, ensuring backward compatibility.

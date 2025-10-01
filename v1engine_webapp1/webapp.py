@@ -93,7 +93,7 @@ with st.sidebar:
                 default_config = yaml.safe_load(f)
                 default_tickers = [t.upper() for t in default_config.get('tickers', [])]
         except FileNotFoundError:
-            default_tickers = available_tickers[:20]
+            default_tickers = available_tickers[:453]
 
         selected_tickers = st.multiselect(
             "Select Tickers to Trade",

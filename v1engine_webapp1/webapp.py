@@ -46,7 +46,7 @@ else:
     except Exception as e:
         st.error(f"Could not read the file 'daily_spy.csv'. Error: {e}")
 
-        
+
 st.write("Configure your simulation parameters in the sidebar on the left and click 'Run Backtest' to see the results.")
 
 # --- Helper Function to get Ticker Symbols ---
@@ -196,8 +196,9 @@ if run_button:
 
         with st.spinner("Please wait, the simulation is running... This may take a moment."):
             try:
+                data_dir = os.path.join(project_path, 'data')
                 master_logger = BacktestLogger()
-                backtest = Backtest(config=st.session_state.config)
+                backtest = Backtest(config=st.session_state.config, data_path=data_dir)
                 backtest.run(logger=master_logger, config_filename="Streamlit_Run")
                 st.session_state.backtest_results = backtest
                 st.success("Backtest simulation completed successfully!")

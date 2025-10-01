@@ -151,7 +151,7 @@ class Backtest:
     Orchestrates the entire backtesting process, from data handling to
     performance reporting.
     """
-    def __init__(self, config):
+    def __init__(self, config, data_path):
         """Initializes the backtesting engine with a given configuration."""
         self.config = config
         settings = self.config['backtest_settings']
@@ -161,7 +161,7 @@ class Backtest:
         self.tickers_to_trade = [t.lower() for t in self.config['tickers']]
         self.output_dir = None
         all_required_tickers = list(set(self.tickers_to_trade + [self.benchmark_ticker]))
-        self.data_handler = DataHandler(csv_dir='data', ticker_list=all_required_tickers)
+        self.data_handler = DataHandler(csv_dir=data_path, ticker_list=all_required_tickers)
         
         # --- MODIFICATION START: Read rebalancing frequency from config ---
         # Defaults to 1 (daily) if not specified, ensuring backward compatibility.

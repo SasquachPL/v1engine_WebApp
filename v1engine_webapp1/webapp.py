@@ -88,6 +88,7 @@ with st.sidebar:
         selected_tickers = []
     else:
         try:
+            config_path = os.path.join(project_path, 'config1.yaml')
             with open('config1.yaml', 'r') as f:
                 default_config = yaml.safe_load(f)
                 default_tickers = [t.upper() for t in default_config.get('tickers', [])]

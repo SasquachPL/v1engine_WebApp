@@ -4,7 +4,7 @@ from strategy_base import Strategy
 class SmaRsi3Strategy(Strategy):
     """
     Implements a strategy based on SMA crossover confirmed by RSI.
-    Method 3: The raw buy signal is the RSI value's distance from the 50 line.
+    Method 2: The raw buy signal is the crossover magnitude normalized by price.
     """
     def __init__(self, data_handler, short_window=50, long_window=200, rsi_period=14, rsi_threshold=50):
         """
@@ -18,7 +18,7 @@ class SmaRsi3Strategy(Strategy):
 
     def generate_signals(self):
         """
-        Generates buy/sell signals. The buy signal is RSI - 50.
+        Generates buy/sell signals. The buy signal is the normalized crossover gap.
         """
         signals_df = pd.DataFrame()
         for ticker in self.tickers:
@@ -40,13 +40,18 @@ class SmaRsi3Strategy(Strategy):
             # Create signals
             signals = pd.Series(0.0, index=hist_data.index, name=ticker)
             
-            # --- MODIFICATION START (METHOD 3) ---
+            # --- MODIFICATION START (METHOD 2) ---
             # Buy signal: Short SMA crosses above Long SMA, and RSI is above threshold.
             buy_mask = ((short_sma > long_sma) & (short_sma.shift(1) <= long_sma.shift(1)) &
                         (rsi > self.rsi_threshold))
             
-            # The raw signal is how far the RSI is above the neutral 50 line.
-            signals[buy_mask] = rsi[buy_mask] - 50
+            close_price = hist_data['close']
+            valid_price = close_price[buy_mask] > 0
+
+            # The raw signal is the gap between SMAs, normalized by price.
+            if valid_price.any():
+                signal_mask = buy_mask & (close_price > 0)
+                signals[signal_mask] = (short_sma[signal_mask] - long_sma[signal_mask]) / close_price[signal_mask]
 
             # Sell signal: Short SMA crosses below Long SMA.
             signals[(short_sma < long_sma) & (short_sma.shift(1) >= long_sma.shift(1))] = -1

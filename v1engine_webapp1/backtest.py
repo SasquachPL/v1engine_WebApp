@@ -124,9 +124,6 @@ STRATEGY_MAPPING = {
     'SmaRsiStrategy': SmaRsiStrategy, 
     'SmaRsi2Strategy': SmaRsi2Strategy, 
     'SmaRsi3Strategy': SmaRsi3Strategy,
-    'KeltnerStrategy': KeltnerStrategy, 
-    'Keltner2Strategy': Keltner2Strategy,
-    'Keltner3Strategy': Keltner3Strategy,
     'BollingerRsiStrategy': BollingerRsiStrategy,
     'BollingerRsi2Strategy': BollingerRsi2Strategy,
     'BollingerRsi3Strategy': BollingerRsi3Strategy, 
@@ -138,7 +135,6 @@ STRATEGY_MAPPING = {
     'StochasticStrategy': StochasticStrategy,
     'Stochastic2Strategy': Stochastic2Strategy,
     'StochSpreadStrategy': StochSpreadStrategy,
-    'FibonacciStrategy': FibonacciStrategy,
     'ZScoreStrategy': ZScoreStrategy,
     'ObvStrategy': ObvStrategy,
     'ObvRocStrategy': ObvRocStrategy

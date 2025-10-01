@@ -69,7 +69,7 @@ class DataHandler:
                 df = pd.read_csv(file_path, parse_dates=['date'], index_col='date')
                 self.data[ticker] = df
             except Exception as e:
-                print(f"Error loading data for {ticker}: {e}")
+                raise e 
         print("DataHandler: Finished loading data.")
 
 

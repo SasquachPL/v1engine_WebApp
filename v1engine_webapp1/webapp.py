@@ -28,25 +28,6 @@ st.set_page_config(
 )
 
 st.title("📈 V1Engine Multi-Strategy Backtester")
-
-st.subheader("🕵️‍♂️ File Content Diagnostic")
-spy_path = os.path.join(project_path, 'data', 'daily_spy.csv')
-if not os.path.exists(spy_path):
-    st.error(f"CRITICAL: The file 'daily_spy.csv' does NOT exist at the expected path: {spy_path}")
-else:
-    try:
-        with open(spy_path, 'r') as f:
-            file_content = f.read(500) # Read the first 500 characters
-        st.text("Contents of 'daily_spy.csv':")
-        st.code(file_content, language="text")
-        if "git-lfs" in file_content:
-            st.warning("‼️ This looks like a Git LFS pointer file, not a real CSV. This is the cause of the error.")
-        else:
-            st.success("✅ The file appears to be a valid CSV.")
-    except Exception as e:
-        st.error(f"Could not read the file 'daily_spy.csv'. Error: {e}")
-
-
 st.write("Configure your simulation parameters in the sidebar on the left and click 'Run Backtest' to see the results.")
 
 # --- Helper Function to get Ticker Symbols ---

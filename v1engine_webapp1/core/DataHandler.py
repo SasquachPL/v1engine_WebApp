@@ -52,34 +52,24 @@ class DataHandler:
         print(f"DataHandler: Discovered tickers: {sorted(tickers)}")
         return sorted(tickers)
 
-    # --- THIS IS THE NEW, IMPROVED CODE ---
-
     def _load_data(self):
         """
-        Loads the historical data for each ticker, checking for both lowercase
-        and uppercase filenames to handle case-sensitivity issues on deployment.
+        Loads the historical data for each ticker in self.tickers from its CSV file.
         """
         print("DataHandler: Loading historical data from CSV files...")
         for ticker in self.tickers:
-        # Define potential filenames
-            file_path_lower = os.path.join(self.csv_dir, f"daily_{ticker.lower()}.csv")
-            file_path_upper = os.path.join(self.csv_dir, f"daily_{ticker.upper()}.csv")
-        
-        # Check which file exists, defaulting to lowercase
-            if os.path.exists(file_path_lower):
-                file_path = file_path_lower
-            elif os.path.exists(file_path_upper):
-                file_path = file_path_upper
-            else:
-                print(f"Warning: Data file not found for ticker '{ticker}' as either {file_path_lower} or {file_path_upper}. Skipping.")
+            file_path = os.path.join(self.csv_dir, f"daily_{ticker}.csv")
+            
+            if not os.path.exists(file_path):
+                print(f"Warning: Data file not found for ticker '{ticker}' at {file_path}. Skipping.")
                 continue
 
             try:
+                # This correctly uses pd.read_csv for .csv files
                 df = pd.read_csv(file_path, parse_dates=['date'], index_col='date')
-                # Always store the data with a consistent lowercase key
-                self.data[ticker.lower()] = df
+                self.data[ticker] = df
             except Exception as e:
-                print(f"Error loading data for {ticker} from {file_path}: {e}")
+                print(f"Error loading data for {ticker}: {e}")
         print("DataHandler: Finished loading data.")
 
 

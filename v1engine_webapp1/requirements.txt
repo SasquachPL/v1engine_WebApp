@@ -1,6 +1,8 @@
-streamlit
 pandas
 PyYAML
+tqdm
+requests
 matplotlib
 numpy
-tqdm
+streamlit
+seaborn

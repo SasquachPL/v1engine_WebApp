@@ -11,7 +11,7 @@ import numpy as np
 
 # --- Import All Components ---
 try:
-    # NOTE: DataDownloader has been removed as it's not used in the deployed app.
+    from core.DataDownloader import DataDownloader, ALPHA_VANTAGE_API_KEY
     from core.DataHandler import DataHandler
     from core.portfolio import Portfolio
     from core.ExecutionHandler import ExecutionHandler
@@ -45,6 +45,8 @@ try:
     from strategies.strategy_zscore import ZScoreStrategy
     from strategies.strategy_obv import ObvStrategy
     from strategies.strategy_obvroc import ObvRocStrategy
+
+    
     from strategies.strategy_rsi_exit import RsiExitStrategy
 
 except ImportError as e:
@@ -91,7 +93,7 @@ class PortfolioLogger:
         with open(self.log_file, 'w', newline='') as f:
             writer = csv.writer(f)
             writer.writerow([
-                'timestamp', 'total_value', 'invested_value', 'cash',
+                'timestamp', 'total_value', 'invested_value', 'cash', 
                 'position_count', 'pnl_realized', 'holdings'
             ])
 
@@ -112,21 +114,22 @@ class PortfolioLogger:
             ])
 
 
+
 STRATEGY_MAPPING = {
-    'MomentumStrategy': MomentumStrategy,
+    'MomentumStrategy': MomentumStrategy, 
     'Momentum2Strategy': Momentum2Strategy,
-    'Momentum3Strategy': Momentum3Strategy,
+    'Momentum3Strategy': Momentum3Strategy, 
     'RsiStrategy': RsiStrategy,
     'Rsi2Strategy': Rsi2Strategy,
-    'SmaRsiStrategy': SmaRsiStrategy,
-    'SmaRsi2Strategy': SmaRsi2Strategy,
+    'SmaRsiStrategy': SmaRsiStrategy, 
+    'SmaRsi2Strategy': SmaRsi2Strategy, 
     'SmaRsi3Strategy': SmaRsi3Strategy,
-    'KeltnerStrategy': KeltnerStrategy,
+    'KeltnerStrategy': KeltnerStrategy, 
     'Keltner2Strategy': Keltner2Strategy,
     'Keltner3Strategy': Keltner3Strategy,
     'BollingerRsiStrategy': BollingerRsiStrategy,
     'BollingerRsi2Strategy': BollingerRsi2Strategy,
-    'BollingerRsi3Strategy': BollingerRsi3Strategy,
+    'BollingerRsi3Strategy': BollingerRsi3Strategy, 
     'BollingerStrategy': BollingerStrategy,
     'Bollinger2Strategy': Bollinger2Strategy,
     'MacdStrategy': MacdStrategy,
@@ -139,6 +142,7 @@ STRATEGY_MAPPING = {
     'ZScoreStrategy': ZScoreStrategy,
     'ObvStrategy': ObvStrategy,
     'ObvRocStrategy': ObvRocStrategy
+
 }
 EXIT_STRATEGY_MAPPING = {'RsiExit': RsiExitStrategy}
 
@@ -153,41 +157,15 @@ class Backtest:
         settings = self.config['backtest_settings']
         self.start_date = pd.to_datetime(settings['start_date'])
         self.end_date = pd.to_datetime(settings['end_date'])
-        
-        # --- DEFINITIVE FIX START ---
-        
-        # 1. Explicitly define the benchmark ticker and ensure it's lowercase.
-        self.benchmark_ticker = settings.get('benchmark_ticker', 'spy').lower()
-        print(f"INFO: Benchmark ticker has been set to: '{self.benchmark_ticker}'")
-
-        # 2. Get the user-selected tickers for trading and ensure they are lowercase.
-        self.tickers_to_trade = [str(t).lower() for t in self.config.get('tickers', [])]
-
-        # 3. Create a combined list for the DataHandler.
-        # Using a set() ensures the benchmark ticker is included without duplicates.
-        all_tickers_to_load = list(set(self.tickers_to_trade + [self.benchmark_ticker]))
-        print(f"INFO: DataHandler will now attempt to load data for the following tickers: {all_tickers_to_load}")
-
-        # 4. Initialize DataHandler and load the data.
-        self.data_handler = DataHandler(csv_dir='data', ticker_list=all_tickers_to_load)
-
-        # 5. Add a HARD CHECK to verify that the benchmark data was actually loaded into the dictionary.
-        if self.benchmark_ticker not in self.data_handler.data:
-            # If the key is not found, raise an immediate, very clear error.
-            error_message = (
-                f"FATAL ERROR: The benchmark ticker '{self.benchmark_ticker}' could not be found in the data dictionary after loading. "
-                f"This usually means the file 'daily_SPY.csv' (or similar) is missing from your GitHub repository's 'data/' folder or could not be read. "
-                f"The data dictionary currently contains the following keys: {list(self.data_handler.data.keys())}"
-            )
-            # This will stop the program and print our detailed message in the Streamlit logs.
-            raise KeyError(error_message)
-        
-        print(f"SUCCESS: Benchmark data for '{self.benchmark_ticker}' was found and loaded successfully.")
-        
-        # --- DEFINITIVE FIX END ---
-
+        self.benchmark_ticker = settings['benchmark_ticker'].lower()
+        self.tickers_to_trade = [t.lower() for t in self.config['tickers']]
         self.output_dir = None
+        self.data_handler = DataHandler(csv_dir='data', ticker_list=self.tickers_to_trade)
+        
+        # --- MODIFICATION START: Read rebalancing frequency from config ---
+        # Defaults to 1 (daily) if not specified, ensuring backward compatibility.
         self.rebalancing_frequency = settings.get('rebalancing_frequency', 1)
+        # --- MODIFICATION END ---
 
         stop_loss_config = settings.get('stop_loss', {})
         take_profit_config = settings.get('take_profit', {})
@@ -196,16 +174,15 @@ class Backtest:
         take_profit_strategy = self._initialize_exit_strategy(take_profit_config)
 
         self.strategies = []
-        if 'strategies' in self.config:
-            for strat_config in self.config['strategies']:
-                if strat_config.get('enabled', True):
-                    strat_name = strat_config['name']
-                    if strat_name in STRATEGY_MAPPING:
-                        strat_class = STRATEGY_MAPPING[strat_name]
-                        params = strat_config.get('params', {})
-                        self.strategies.append(strat_class(self.data_handler, **params))
-                    else:
-                        print(f"Warning: Strategy '{strat_name}' from config not found.")
+        for strat_config in self.config['strategies']:
+            if strat_config.get('enabled', True):
+                strat_name = strat_config['name']
+                if strat_name in STRATEGY_MAPPING:
+                    strat_class = STRATEGY_MAPPING[strat_name]
+                    params = strat_config.get('params', {})
+                    self.strategies.append(strat_class(self.data_handler, **params))
+                else:
+                    print(f"Warning: Strategy '{strat_name}' from config not found.")
 
         self.portfolio = Portfolio(self.data_handler,
                                    initial_cash=settings['initial_cash'],
@@ -217,11 +194,8 @@ class Backtest:
 
         benchmark_df = self.data_handler.data.get(self.benchmark_ticker)
         if benchmark_df is not None:
-            # Filter trading days based on the loaded benchmark data
-            mask = (benchmark_df.index >= self.start_date) & (benchmark_df.index <= self.end_date)
-            self.trading_days = benchmark_df.loc[mask].index
+            self.trading_days = benchmark_df.loc[self.start_date:self.end_date].index
         else:
-            # This is a fallback, but the hard check above should prevent this from ever being reached.
             self.trading_days = pd.Index([])
         
         commission = settings.get('commission_per_trade', 1.0)
@@ -247,9 +221,11 @@ class Backtest:
         individual_signals_dfs = []
         strategy_names = []
         for strategy in self.strategies:
+            # Each strategy returns a DataFrame of raw scores
             individual_signals_dfs.append(strategy.generate_signals())
             strategy_names.append(strategy.__class__.__name__)
 
+        # Align all signal DataFrames to the backtest's trading days and tickers
         aligned_dfs = [
             df.reindex(index=self.trading_days, columns=self.tickers_to_trade).fillna(0)
             for df in individual_signals_dfs
@@ -280,13 +256,21 @@ class Backtest:
         trade_logger = TradeLogger(output_dir=self.output_dir)
         portfolio_logger = PortfolioLogger(output_dir=self.output_dir)
 
+        # --- MODIFICATION START: Add counter for rebalancing frequency ---
+        # Initialize to ensure rebalancing happens on the very first day of the simulation.
         days_since_last_rebalance = self.rebalancing_frequency
+        # --- MODIFICATION END ---
 
         for current_date in tqdm(self.trading_days, desc="Running Backtest"):
+            # This logic runs EVERY day to ensure the equity curve is accurate.
             self.portfolio.update_value(current_date)
             self.equity_curve.loc[current_date] = self.portfolio.total_value
             
+            # --- MODIFICATION START: Conditional block for rebalancing ---
+            # All trading logic is now inside this block, which only runs
+            # when the rebalancing frequency is met.
             if days_since_last_rebalance >= self.rebalancing_frequency:
+            
                 exit_orders = self.portfolio.generate_exit_orders(current_date, trade_logger)
                 sold_tickers = set()
                 if exit_orders:
@@ -296,6 +280,7 @@ class Backtest:
                             self.portfolio.update_positions_from_fill(fill_event, current_date)
                             sold_tickers.add(fill_event['ticker'])
 
+                # --- RANKING & Z-SCORE NORMALIZATION ---
                 strategy_specific_scores = defaultdict(dict)
                 aggregated_scores_for_date = defaultdict(float)
 
@@ -345,10 +330,14 @@ class Backtest:
                         if fill_event:
                             self.portfolio.update_positions_from_fill(fill_event, current_date)
                 
+                # Reset the counter after a rebalancing day
                 days_since_last_rebalance = 1
             else:
+                # If not a rebalancing day, just increment the counter
                 days_since_last_rebalance += 1
+            # --- MODIFICATION END ---
 
+            # Portfolio state is logged daily to get a complete history.
             portfolio_logger.log_portfolio_state(current_date, self.portfolio)
         
         print("\n--- Backtest Simulation Finished ---")
@@ -356,7 +345,8 @@ class Backtest:
 
     def generate_performance_report(self, logger, config_filename):
         """
-        Generates the final performance report and chart.
+        Generates the final performance report and chart by passing all necessary
+        data, including backtest settings, to the PerformanceReporter.
         """
         benchmark_prices = self.data_handler.data[self.benchmark_ticker]['close']
         
@@ -379,7 +369,12 @@ class Backtest:
             reporter=reporter
         )
 
+# --- MODIFICATION START ---
+# This block now controls the execution for single runs.
+# It allows the Backtest class to be imported by other scripts without
+# automatically running the user input section.
 if __name__ == '__main__':
+    # --- Configuration File Selection for Single Run ---
     config_files = sorted([f for f in os.listdir('.') if f.startswith('config') and f.endswith('.yaml')])
     if not config_files:
         print("Error: No 'config*.yaml' files found in this directory for a single run.")
@@ -406,8 +401,22 @@ if __name__ == '__main__':
     with open(selected_filename, 'r') as f:
         config = yaml.safe_load(f)
     
-    # NOTE: The Data Download Check block has been removed.
+    # --- Data Download Check ---
+    settings = config['backtest_settings']
+    tickers = config['tickers']
+    all_required_tickers = list(set([t.lower() for t in tickers] + [settings['benchmark_ticker'].lower()]))
+    
+    if ALPHA_VANTAGE_API_KEY and ALPHA_VANTAGE_API_KEY != "YOUR_ACTUAL_API_KEY_HERE":
+        downloader = DataDownloader(api_key=ALPHA_VANTAGE_API_KEY, output_dir='data')
+        missing_tickers = [t for t in all_required_tickers if not os.path.exists(os.path.join('data', f"daily_{t}.csv"))]
+        if missing_tickers:
+            print(f"Missing data for: {missing_tickers}. Downloading now...")
+            download_start_date = config.get('download_start_date', '2020-01-01')
+            downloader.download_and_save_data(missing_tickers, download_start_date, settings['end_date'])
+        else:
+            print("All required data files are present.")
 
+    # --- Run Single Backtest ---
     master_logger = BacktestLogger()
     try:
         backtest = Backtest(config=config)
@@ -415,4 +424,4 @@ if __name__ == '__main__':
     except (ValueError, KeyError, TypeError) as e:
         print(f"\nAn error occurred during backtest setup or execution: {e}")
         traceback.print_exc()
-
+# --- MODIFICATION END ---
